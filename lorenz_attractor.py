@@ -1,7 +1,7 @@
+# some packages are necessary to run the program.
 # pip install numpy
 # pip install plotly
 # pip install nbformat # Mime type rendering requires nbformat>=4.2.0
-# pip install scipy
 # pip install matplotlib
 
 import numpy as np
@@ -21,11 +21,11 @@ def main():
     trajectory_heuns = heuns_method(initial_state, 25000, 0.001)
     trajectory_rk4 = rk4_method(initial_state, 25000, 0.001)
     time_pt1 = 1000
-    simulation_multiple(trajectory_eulers, trajectory_heuns, trajectory_rk4, time_pt1)
+    vis_diff_methods(trajectory_eulers, trajectory_heuns, trajectory_rk4, time_pt1)
     time_pt2 = 12000
-    simulation_multiple(trajectory_eulers, trajectory_heuns, trajectory_rk4, time_pt2)
+    vis_diff_methods(trajectory_eulers, trajectory_heuns, trajectory_rk4, time_pt2)
     time_pt3 = 24000
-    simulation_multiple(trajectory_eulers, trajectory_heuns, trajectory_rk4, time_pt3)
+    vis_diff_methods(trajectory_eulers, trajectory_heuns, trajectory_rk4, time_pt3)
 
     i_state_1 = [1, 1, 1]
     i_state_2 = [1.5, 1.5, 1.5]
@@ -34,16 +34,11 @@ def main():
     trj1 = eulers_method(i_state_1, 10000, 0.005)
     trj2 = eulers_method(i_state_2, 10000, 0.005)
     trjs = [trj1, trj2]
-    sim_diff_states(trjs, "euler", 2000, state)
+    vis_diff_states(trjs, "euler", 2000, state)
 
-    x, z = trajectory_rk4[0], trajectory_rk4[2]
-    fig, ax = plt.subplots(layout="constrained")
-    sc = ax.scatter(x, z, c=get_intersections(trajectory_rk4), cmap="viridis", s=1)
-    ax.set_xlabel("x")
-    ax.set_ylabel("z")
-    fig.colorbar(mappable=sc, ax=ax, label="intersection at Y axis")
-    ax.set_title("Poincaré map for Lorenz Attractor at y=0")
-    plt.show()
+    plot_poincare("x", "z", "y", 0, 2, 1, trajectory_rk4)
+    plot_poincare("x", "y", "z", 0, 1, 2, trajectory_rk4)
+    plot_poincare("y", "z", "x", 1, 2, 0, trajectory_rk4)
 
 
 # define lorenz system
@@ -54,19 +49,19 @@ def lorenz(x, y, z):
     return np.array([dx, dy, dz])
 
 
-def eulers_method(initial_values, num_time_pts, h):
+def eulers_method(initial_state, num_time_pts, h):
     """Solves first order non-linear differential equation systems with Euler's method.
     Args:
-        initial_values: initial x,y,z values
+        initial_state: initial x,y,z values
         num_time_pts: number of time points to plot
         h: next_value - current_value
     Returns:
-        2-D array: trajectory of lorenz attractor
+        numpy array: trajectory of lorenz attractor
     """
     # trajectory = [[x0,x1,x2,...], [y1,y2,y3],...], [z1,z2,z3,...]]
     trajectory = np.zeros((3, num_time_pts))  # trajectory matrix
     # x, y, z = initial_values[0], initial_values[1], initial_values[2]
-    x, y, z = initial_values
+    x, y, z = initial_state
     for i in range(0, num_time_pts):
         trajectory[0, i] = x
         trajectory[1, i] = y
@@ -79,16 +74,16 @@ def eulers_method(initial_values, num_time_pts, h):
     return trajectory
 
 
-def heuns_method(initial_values, num_time_pts, h):
+def heuns_method(initial_state, num_time_pts, h):
     """Solves first order non-linear differential equation systems with Heun's method.
     Args:
-        initial_values: initial x,y,z values
+        initial_state: initial x,y,z values
         num_time_pts: number of time points to plot
         h: next_value - current_value
     Returns:
-        2-D array: trajectory of lorenz attractor
+        numpy array: trajectory of lorenz attractor
     """
-    x, y, z = initial_values
+    x, y, z = initial_state
     trajectory = np.zeros((3, num_time_pts))
     for i in range(0, num_time_pts):
         trajectory[0, i] = x
@@ -121,6 +116,14 @@ def heuns_method(initial_values, num_time_pts, h):
 
 
 def rk4_method(initial_state, num_time_pts, h):
+    """Solves first order non-linear differential equation systems with Runge-Kutta(4th) method.
+    Args:
+        initial_state: initial x,y,z values
+        num_time_pts: number of time points to plot
+        h: next_value - current_value
+    Returns:
+        numpy array: trajectory of lorenz attractor
+    """
     x, y, z = initial_state
     trajectory = np.zeros((3, num_time_pts))
     for i in range(num_time_pts):
@@ -165,18 +168,7 @@ def put_markers(time_pt, trajectory):
     return markers
 
 
-def put_markers(time_pt, trajectory):
-    markers = np.zeros((3, 1))
-    x = trajectory[0, time_pt]
-    y = trajectory[1, time_pt]
-    z = trajectory[2, time_pt]
-    markers[0] = x
-    markers[1] = y
-    markers[2] = z
-    return markers
-
-
-def sim_diff_states(trj, method_name, time_pt, initial_state):
+def vis_diff_states(trj, method_name, time_pt, initial_state):
     name = method_name.capitalize()
     trj1, trj2 = trj
     st1, st2 = initial_state
@@ -191,16 +183,16 @@ def sim_diff_states(trj, method_name, time_pt, initial_state):
             [{"type": "scatter3d"}, {"type": "scatter3d"}],
         ],
         row_heights=[2],
-        column_widths=[3, 3],
+        column_widths=[2, 2],
     )
-
+    # add traces for 1. trajectory to the first subplot
     fig.add_trace(
         go.Scatter3d(
             x=trj1[0, :],
             y=trj1[1, :],
             z=trj1[2, :],
             mode="lines",
-            line=dict(color="blue", width=2),
+            line=dict(color="salmon", width=2),
             marker=dict(size=2),
             name=f"{name}",
         ),
@@ -208,13 +200,14 @@ def sim_diff_states(trj, method_name, time_pt, initial_state):
         col=1,
     )
 
+    # add markers for 1. trajectory to the first subplot
     fig.add_trace(
         go.Scatter3d(
             x=put_markers(time_pt, trj1)[0, :],
             y=put_markers(time_pt, trj1)[1, :],
             z=put_markers(time_pt, trj1)[2, :],
             mode="markers",
-            marker_color="darkblue",
+            marker_color="purple",
             marker_size=5,
             name=f"{name} marker",
         ),
@@ -222,13 +215,14 @@ def sim_diff_states(trj, method_name, time_pt, initial_state):
         col=1,
     )
 
+    # add traces for 2. trajectory to the first subplot
     fig.add_trace(
         go.Scatter3d(
             x=trj2[0, :],
             y=trj2[1, :],
             z=trj2[2, :],
             mode="lines",
-            line=dict(color="blue", width=2),
+            line=dict(color="salmon", width=2),
             marker=dict(size=2),
             showlegend=False,
         ),
@@ -236,13 +230,14 @@ def sim_diff_states(trj, method_name, time_pt, initial_state):
         col=2,
     )
 
+    # add markers for 1. trajectory to the first subplot
     fig.add_trace(
         go.Scatter3d(
             x=put_markers(time_pt, trj2)[0, :],
             y=put_markers(time_pt, trj2)[1, :],
             z=put_markers(time_pt, trj2)[2, :],
             mode="markers",
-            marker_color="darkblue",
+            marker_color="purple",
             marker_size=5,
             showlegend=False,
         ),
@@ -261,7 +256,7 @@ def sim_diff_states(trj, method_name, time_pt, initial_state):
     fig.show()
 
 
-def simulation_multiple(trj_euler, trj_heuns, trj_rk4, time_pt):
+def vis_diff_methods(trj_euler, trj_heuns, trj_rk4, time_pt):
     trace_eulers = go.Scatter3d(
         x=trj_euler[0, :],
         y=trj_euler[1, :],
@@ -335,8 +330,24 @@ def simulation_multiple(trj_euler, trj_heuns, trj_rk4, time_pt):
     fig.show()
 
 
-def get_intersections(trj):
-    return trj[1]
+def get_intersections(trj, axis):
+    # return the points that crosses axis to get intersections
+    return trj[axis]
+
+
+def plot_poincare(
+    ax1, ax2, intsec_ax, ax_index_1, ax_index_2, ax_index_intsec, trajectory_rk4
+):
+    a, b = trajectory_rk4[ax_index_1], trajectory_rk4[ax_index_2]
+    fig, ax = plt.subplots(layout="constrained")
+    sc = ax.scatter(
+        a, b, c=get_intersections(trajectory_rk4, ax_index_intsec), cmap="viridis", s=1
+    )
+    ax.set_xlabel(f"{ax1}")
+    ax.set_ylabel(f"{ax2}")
+    fig.colorbar(mappable=sc, ax=ax, label=f"intersection at {intsec_ax} axis")
+    ax.set_title(f"Poincaré map for Lorenz Attractor at {intsec_ax}=0")
+    plt.show()
 
 
 if __name__ == "__main__":
