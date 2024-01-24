@@ -9,4 +9,3 @@ scipro_presentation.pptx
 .ipynb_checkpoints/rk4_implementation-checkpoint.ipynb
 __pycache__/lorenz_attractor.cpython-312.pyc
 .ipynb_checkpoints/lorenz_attractor-checkpoint.ipynb
-lorenz_attractor.py
