@@ -4,3 +4,7 @@ paper_34367.pages
 .ipynb_checkpoints/script-checkpoint.ipynb
 ~$scipro_presentation.pptx
 scipro_presentation.pptx
+.ipynb_checkpoints/heuns_implementation-checkpoint.ipynb
+.gitignore
+.ipynb_checkpoints/rk4_implementation-checkpoint.ipynb
+__pycache__/lorenz_attractor.cpython-312.pyc

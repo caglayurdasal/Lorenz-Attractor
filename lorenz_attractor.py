@@ -1,9 +1,3 @@
-# some packages are necessary to run the program.
-# pip install numpy
-# pip install plotly
-# pip install nbformat # Mime type rendering requires nbformat>=4.2.0
-# pip install matplotlib
-
 import numpy as np
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
