@@ -193,7 +193,7 @@ def sim_diff_states(trj, method_name, time_pt, initial_state):
         row_heights=[2],
         column_widths=[3, 3],
     )
-    # Add trace for Trajectory 1 to the first subplot
+
     fig.add_trace(
         go.Scatter3d(
             x=trj1[0, :],
@@ -208,7 +208,6 @@ def sim_diff_states(trj, method_name, time_pt, initial_state):
         col=1,
     )
 
-    # Add marker for Trajectory 1 to the first subplot
     fig.add_trace(
         go.Scatter3d(
             x=put_markers(time_pt, trj1)[0, :],
@@ -223,7 +222,6 @@ def sim_diff_states(trj, method_name, time_pt, initial_state):
         col=1,
     )
 
-    # Add trace for Trajectory 2 to the second subplot
     fig.add_trace(
         go.Scatter3d(
             x=trj2[0, :],
@@ -238,7 +236,6 @@ def sim_diff_states(trj, method_name, time_pt, initial_state):
         col=2,
     )
 
-    # Add marker for Trajectory 2 to the second subplot
     fig.add_trace(
         go.Scatter3d(
             x=put_markers(time_pt, trj2)[0, :],
