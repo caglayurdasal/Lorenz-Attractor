@@ -54,7 +54,6 @@ def eulers_method(initial_state, num_time_pts, h):
     """
     # trajectory = [[x0,x1,x2,...], [y1,y2,y3],...], [z1,z2,z3,...]]
     trajectory = np.zeros((3, num_time_pts))  # trajectory matrix
-    # x, y, z = initial_values[0], initial_values[1], initial_values[2]
     x, y, z = initial_state
     for i in range(0, num_time_pts):
         trajectory[0, i] = x
@@ -325,7 +324,7 @@ def vis_diff_methods(trj_euler, trj_heuns, trj_rk4, time_pt):
 
 
 def get_intersections(trj, axis):
-    # return the points that crosses axis to get intersections
+    # return the points that crosses 2D axis to get intersections
     return trj[axis]
 
 
@@ -340,7 +339,7 @@ def plot_poincare(
     ax.set_xlabel(f"{ax1}")
     ax.set_ylabel(f"{ax2}")
     fig.colorbar(mappable=sc, ax=ax, label=f"intersection at {intsec_ax} axis")
-    ax.set_title(f"Poincaré map for Lorenz Attractor at {intsec_ax}=0")
+    ax.set_title(f"Poincaré map for Lorenz Attractor at {intsec_ax}")
     plt.show()
 
 
