@@ -35,6 +35,10 @@ The Lorenz Attractor is a classical representation of deterministic chaos. This 
 2. Explore the notebook to understand the Lorenz Attractor and numerical methods.
 
 3. Execute cells to visualize the results.
+4. If you want to use python file instead of Jupyter notebook, run the command:
+   ```bash
+   python3 lorenz_attractor.py
+   ```
 
 ## Requirements
 
@@ -43,6 +47,3 @@ Make sure you have the required Python libraries installed. You can install them
 ```bash
 pip install -r requirements.txt
 ```
-
-Run requirements.txt before executing the program:
-> pip install -U -r requirements.txt
